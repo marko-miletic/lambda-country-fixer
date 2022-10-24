@@ -1,12 +1,11 @@
 from chalice import Chalice
 import boto3
 import pandas as pd
-from chalicelib import test
-#test.VALUE
 from chalicelib import dataframes_correction
 from chalicelib import standard_values
 from io import BytesIO
 from io import StringIO
+import os
 
 
 app = Chalice(app_name='bla-ha-ha')
@@ -42,9 +41,12 @@ def handler(event):
     codes_set_alpha2 = standard_values.get_codes_alpha2()
     country_code_combinations = standard_values.get_country_code_combinations()
 
+    file_extension = os.path.splitext(event.key)[1]
+    func_read_extension = getattr(pd, f"read_{file_extension[1:]}")
+
     obj = s3.Object(INPUT_BUCKET, event.key)
     with BytesIO(obj.get()['Body'].read()) as bio:
-        df = pd.read_csv(bio)
+        df = func_read_extension(bio)
     
     dataframes_correction.correction([df], countries_set, codes_set_alpha3, codes_set_alpha2, country_code_combinations)
 
