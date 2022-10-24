@@ -1,0 +1,23 @@
+{
+  "resources": [
+    {
+      "name": "default-role",
+      "resource_type": "iam_role",
+      "role_arn": "arn:aws:iam::000000000000:role/moj_projekat-dev",
+      "role_name": "moj_projekat-dev"
+    },
+    {
+      "name": "handler",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:us-east-1:000000000000:function:moj_projekat-dev-handler"
+    },
+    {
+      "name": "handler-s3event",
+      "resource_type": "s3_event",
+      "bucket": "input",
+      "lambda_arn": "arn:aws:lambda:us-east-1:000000000000:function:moj_projekat-dev-handler"
+    }
+  ],
+  "schema_version": "2.0",
+  "backend": "api"
+}
