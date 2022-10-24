@@ -42,8 +42,10 @@ def handler(event):
     country_code_combinations = standard_values.get_country_code_combinations()
 
     file_extension = os.path.splitext(event.key)[1]
-    func_read_extension = getattr(pd, f"read_{file_extension[1:]}")
+    file_name = os.path.splitext(event.key)[0]
 
+    func_read_extension = getattr(pd, f"read_{file_extension[1:]}")
+    
     obj = s3.Object(INPUT_BUCKET, event.key)
     with BytesIO(obj.get()['Body'].read()) as bio:
         df = func_read_extension(bio)
@@ -52,4 +54,4 @@ def handler(event):
 
     csv_buffer = StringIO()
     df.to_csv(csv_buffer)
-    s3.Object(OUTPUT_BUCKET, event.key).put(Body=csv_buffer.getvalue())
+    s3.Object(OUTPUT_BUCKET, f"{file_name}.csv").put(Body=csv_buffer.getvalue())
